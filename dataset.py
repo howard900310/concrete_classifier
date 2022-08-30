@@ -22,7 +22,7 @@ class MyDataset(Dataset):
         self.path_list = os.listdir(data_path)
 
     def __getitem__(self, idx:int):
-        # img to tensor, label to tensor
+        # get image's path 
         img_path = self.path_list[idx]
         abs_img_path = os.path.join(self.data_path, img_path)
         img = Image.open(abs_img_path)
@@ -34,7 +34,10 @@ class MyDataset(Dataset):
 
 def dataset_split(full_dataset, train_rate):
     '''
-    0.8 0.2
+    using random_split to split the whole dataset.
+
+    train 80%
+    valid 20%
     '''
     train_size = int(len(full_dataset) * train_rate)
     valid_size = (len(full_dataset) - train_size)
