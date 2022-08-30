@@ -1,13 +1,8 @@
 import torch
-import os
 import cv2 as cv
-from PIL import Image
-from torch.utils.data import Dataset
-from torchvision import transforms
 from tqdm import tqdm
 import torch.nn as nn
 from collections import OrderedDict
-
 import torchvision.models as models
 from read_yaml import parse_yaml
 from dataset import MyDataset, dataloader
@@ -20,6 +15,7 @@ def main():
     cfg = parse_yaml(yaml_path)
     print(cfg)
     test_path = cfg['test_path']
+    test_data_save_path = cfg['test_data_save_path']
     # batch_size = cfg['batch_size']
 
     # load model
@@ -29,13 +25,13 @@ def main():
                           ('3', nn.Linear(4096, 4096)),
                           ('4', nn.ReLU()), 
                           ('5',nn.Dropout(0.5)),
-                          ('6', nn.Linear(4096, 4))
+                          ('6', nn.Linear(4096, 6))
                           ]))
     device = torch.device("cuda:0")
     net = models.vgg16(pretrained=False)
     net.classifier = classifier
     net.to(device)
-    net.load_state_dict(torch.load('./weights/weight0829_4class.pth'))
+    net.load_state_dict(torch.load('./weights/weight0830_6class.pth'))
 
     test_dataset = MyDataset(test_path)
     test_loader = dataloader(test_dataset)     
@@ -55,19 +51,23 @@ def main():
                 test_image = cv.imread(data[1][0])
                 # cv.imshow('show', test_image)
                 # cv.waitKey()
-                cv.imwrite('./output/1_spalling/' + data[2][0] , test_image)
+                cv.imwrite(test_data_save_path + '/0_normal/' + data[2][0] , test_image)
             elif soft_output.argmax(1).item() == 1:
                 test_image = cv.imread(data[1][0])
-
-                cv.imwrite('./output/3_rebar_exposed/' + data[2][0] , test_image)
+                cv.imwrite(test_data_save_path + '/1_spalling/' + data[2][0] , test_image)
             elif soft_output.argmax(1).item() == 2:
                 test_image = cv.imread(data[1][0])
-
-                cv.imwrite('./output/normal/' + data[2][0] , test_image)
+                cv.imwrite(test_data_save_path + '/2/' + data[2][0] , test_image)
             elif soft_output.argmax(1).item() == 3:
                 test_image = cv.imread(data[1][0])
-
-                cv.imwrite('./output/unknow/' + data[2][0] , test_image)
+                cv.imwrite(test_data_save_path + '/3_rebar_exposed/' + data[2][0] , test_image)
+            elif soft_output.argmax(1).item() == 4:
+                test_image = cv.imread(data[1][0])
+                cv.imwrite(test_data_save_path + '/4/' + data[2][0] , test_image)
+            elif soft_output.argmax(1).item() == 5:
+                test_image = cv.imread(data[1][0])
+                cv.imwrite(test_data_save_path + '/5_unknow/' + data[2][0] , test_image)
+                
  
 if __name__ == '__main__':
     main()

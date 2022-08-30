@@ -1,10 +1,9 @@
 from metric import *
-from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 import torch
-from torch import nn
 
 def validate(validation_loader, device, model, criterion):
+
     model = model.to(device) # model --> GPU
     model = model.eval() # set eval mode
     with torch.no_grad():# network does not update gradient during evaluation

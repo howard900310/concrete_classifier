@@ -7,7 +7,7 @@ def parse_yaml(yaml_path):
         # print(f1['data_root']) # key-->value
         return content
 
-# yaml_path = './config.yaml'
+# yaml_path = './configs.yaml'
 # parse_yaml(yaml_path)
 
 if __name__ == '__main__':
