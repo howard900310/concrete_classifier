@@ -44,6 +44,6 @@ def dataset_split(full_dataset, train_rate):
     train_set, valid_set = torch.utils.data.random_split(full_dataset, [train_size, valid_size])
     return train_set, valid_set 
 
-def dataloader(dataset, batch_size = 1):
+def dataloader(dataset, batch_size):
     data_loader = torch.utils.data.DataLoader(dataset, batch_size, shuffle=True, num_workers=0)
     return data_loader
