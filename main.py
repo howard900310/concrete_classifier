@@ -18,10 +18,10 @@ from dataset import dataset_split, dataloader
 
 # main function to be executed
 def main():
-    # set hyper-parameter of train, eval scripts
+    # set hyper-parameter of train scripts
     yaml_path = './configs.yaml'
     cfg = parse_yaml(yaml_path)
-    
+    # load hyper-parameter
     epochs = cfg['epochs']
     lr = cfg['lr']
     batch_size = cfg['batch_size']
@@ -30,6 +30,7 @@ def main():
     model_save_path = cfg['model_save_path']
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
+    # set model(6 classes)
     classifier = nn.Sequential(OrderedDict([('0', nn.Linear(25088, 4096)),
                           ('1', nn.ReLU()), 
                           ('2',nn.Dropout(0.5)),
@@ -38,34 +39,33 @@ def main():
                           ('5',nn.Dropout(0.5)),
                           ('6', nn.Linear(4096, 6))
                           ]))
-
     vgg16 = models.vgg16(pretrained=True)
     vgg16.classifier = classifier
     net = vgg16
 
+    # load training dataset
     train_transform = transforms.Compose([
                   transforms.ToTensor(),
                   transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])
                 ])
-
     my_dataset = ImageFolder(train_path, transform=train_transform, target_transform=None)
-
+    # split to 0.8, 0.2
     train_set, valid_set = dataset_split(my_dataset, 0.8)
-
     new_train_loader = dataloader(train_set, batch_size)
     validate_loader = dataloader(valid_set, batch_size)
+
     
     criterion = torch.nn.CrossEntropyLoss() # loss function
-    optimizer = optim.SGD(net.parameters(), lr, momentum=0.9)
+    optimizer = optim.SGD(net.parameters(), lr, momentum=0.9) # optimizer
     # execute train function
     train(new_train_loader, device, net, epochs, lr, criterion, optimizer, tensorboard_path)
     # save trained model
     torch.save(net.state_dict(), model_save_path)
-    # execute evaluation function
+    # execute validate function
     # 1.load model, load parameter
     val_net = vgg16
     val_net.load_state_dict(torch.load(model_save_path))
-    # 2.execute evaluation function
+    # 2.execute validate function
     validate(validate_loader, device, val_net, criterion)
     print('val_acc:', '%.2f' % validate(validate_loader, device, val_net, criterion) + "%")
 
