@@ -1,9 +1,11 @@
-train_path : '../dataset/traindata'
+train_path: '../dataset/traindata'
 test_path: '../dataset/0_24'
-tensorboard_path: './logs/0830_6class'
-model_save_path: './weights/weight0830_6class.pth'
+test_acc_path: '../dataset/output_test'
+tensorboard_path: '../logs/0831_6class'
+model_save_path: './weights/weight0831_6class.pth'
 test_data_save_path: '../dataset/output'
 
 batch_size: 20
+test_batch_size: 1
 epochs: 20
 lr: 0.001
