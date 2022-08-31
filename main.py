@@ -46,9 +46,10 @@ def main():
     # load training dataset
     train_transform = transforms.Compose([
                 transforms.ToTensor(),
-                transforms.RandomHorizontalFlip(),
-                transforms.RandomVerticalFlip(),
-                transforms.RandomRotation(degrees=15, expand=False, fill=None),
+                # (optional)augmentation
+                # transforms.RandomHorizontalFlip(), 
+                # transforms.RandomVerticalFlip(),
+                # transforms.RandomRotation(degrees=15, expand=False, fill=None),
                 transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])
                 ])
     my_dataset = ImageFolder(train_path, transform=train_transform, target_transform=None)
